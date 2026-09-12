@@ -20,6 +20,7 @@ An empty default means the variable is unset and its value is determined automat
 | `DOMAIN` |  | Active Directory domain to join during installation. |
 | `DOMAIN_OU` |  | Distinguished name of the organizational unit. |
 | `WORKGROUP` |  | Name of the Windows workgroup to join. |
+| `SANDBOX` | `N` | Runs an existing Windows installation with a temporary disk overlay that is discarded when the container exits. |
 
 ## 🧠 CPU and Memory
 

@@ -36,6 +36,57 @@ cd /run
 
 trap - ERR
 
+SANDBOX_DISK=""
+
+cleanupSandbox() {
+
+  [ -z "$SANDBOX_DISK" ] && return 0
+
+  rm -f -- "$SANDBOX_DISK"
+  SANDBOX_DISK=""
+}
+
+setupSandbox() {
+
+  disabled "${SANDBOX:-N}" && return 0
+
+  if ! hasBootMarker; then
+    error "SANDBOX requires an existing Windows installation!"
+    exit 68
+  fi
+
+  local base format
+
+  for base in "$STORAGE/data.img" "$STORAGE/data.raw" "$STORAGE/data.qcow2"; do
+    [ -f "$base" ] && break
+  done
+
+  if [ ! -f "$base" ]; then
+    error "Could not find the Windows disk for SANDBOX mode!"
+    exit 68
+  fi
+
+  case "${base##*.}" in
+    qcow2) format="qcow2" ;;
+    *) format="raw" ;;
+  esac
+
+  SANDBOX_DISK="$TMP/sandbox.qcow2"
+  rm -f -- "$SANDBOX_DISK"
+
+  if ! qemu-img create -f qcow2 -F "$format" -b "$base" "$SANDBOX_DISK" >/dev/null; then
+    SANDBOX_DISK=""
+    error "Could not create the SANDBOX disk overlay!"
+    exit 68
+  fi
+
+  ARGS="${ARGS:-}"
+  ARGS="${ARGS//$base/$SANDBOX_DISK}"
+  trap cleanupSandbox EXIT
+}
+
+setupSandbox
+
 cmd=(qemu-system-x86_64)
 version=$("${cmd[@]}" --version | awk 'NR==1 { print $4 }')
 info "Booting ${APP}${BOOT_DESC} using QEMU v$version..." && echo
