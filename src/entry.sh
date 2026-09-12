@@ -80,6 +80,7 @@ setupSandbox() {
     exit 68
   fi
 
+  ARGS="${ARGS:-}"
   ARGS="${ARGS//$base/$SANDBOX_DISK}"
   trap cleanupSandbox EXIT
 }

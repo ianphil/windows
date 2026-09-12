@@ -168,6 +168,17 @@ For a complete graphical desktop experience, see [WinBoat](https://winboat.app),
 > [!TIP]
 > This can also be used to resize an existing disk to a larger capacity without any data loss. However, you will need to [manually extend the disk partition](https://learn.microsoft.com/en-us/windows-server/storage/disk-management/extend-a-basic-volume?tabs=disk-management) afterwards, since the added disk space will appear as unallocated.
 
+### How do I run Windows in sandbox mode?
+
+  Set `SANDBOX` to `Y` to boot an existing installation using a temporary disk overlay:
+
+  ```yaml
+  environment:
+    SANDBOX: "Y"
+  ```
+
+  Changes made to the Windows disk are discarded when the container exits. Sandbox mode requires a completed installation and does not discard changes made through shared folders or external network services.
+
 ### How do I share files with the host?
 
   After installation there will be a folder called `Shared` on your desktop, which can be used to exchange files with the host machine.
